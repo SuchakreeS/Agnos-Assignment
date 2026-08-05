@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ws-server": "node server/websocket-server.js"
   },
   "dependencies": {
     "next": "16.3.0",
