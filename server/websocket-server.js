@@ -6,7 +6,7 @@
 // Run with: npm run ws-server
 const { WebSocketServer } = require("ws");
 
-const PORT = process.env.WS_PORT || 4001;
+const PORT = process.env.PORT || process.env.WS_PORT || 4001;
 const HEARTBEAT_INTERVAL_MS = 30000;
 
 const wss = new WebSocketServer({ port: PORT });
