@@ -1,4 +1,10 @@
-// Staff monitoring dashboard page. Implemented in Phase 5.
+// Staff monitoring dashboard page.
+import StaffView from "@/components/StaffView";
+
 export default function StaffPage() {
-  return null;
+  return (
+    <main className="min-h-screen bg-gray-50 py-8">
+      <StaffView />
+    </main>
+  );
 }

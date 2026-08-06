@@ -77,6 +77,12 @@ export default function PatientForm() {
     setSubmitted(true);
   };
 
+  const handleReset = () => {
+    setFormData(INITIAL_FORM_DATA);
+    setTouched({});
+    setSubmitted(false);
+  };
+
   // Only show a field's error once the user has interacted with it.
   const fieldError = (name) => (touched[name] ? errors[name] : undefined);
 
@@ -87,6 +93,13 @@ export default function PatientForm() {
         <p className="mt-1 text-sm text-green-600">
           Your information has been submitted successfully.
         </p>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-4 rounded-md border border-green-300 bg-white px-4 py-2 text-sm font-medium text-green-700 transition-colors hover:bg-green-100"
+        >
+          Fill Another Form
+        </button>
       </div>
     );
   }

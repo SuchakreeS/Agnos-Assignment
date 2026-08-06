@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Patient Input Form & Staff View
 
-## Getting Started
+A patient fills out a form. Staff watch it fill in live, on another screen. That's the whole idea.
 
-First, run the development server:
+Built for the Agnos front-end assignment.
+
+## Overview
+
+Two pages:
+
+- **`/patient`** — a form for the patient to type their info into.
+- **`/staff`** — a read-only view for staff. Shows the same data, updating as the patient types, plus a status badge (not started / actively filling / idle / submitted).
+
+They talk to each other over a WebSocket. No database, no page refresh — just live sync.
+
+## Tech Stack
+
+- **Next.js** (App Router)
+- **TailwindCSS**
+- **WebSockets** (`ws` package, a small standalone server — see "How Real-Time Works" below for why)
+
+## Setup
+
+You need two terminals — one for the Next.js app, one for the WebSocket server.
+
+```bash
+git clone <this-repo>
+cd agnos-patient-form
+npm install
+```
+
+Terminal 1:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Terminal 2:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+npm run ws-server
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then open:
 
-## Learn More
+- Patient form: [http://localhost:3000/patient](http://localhost:3000/patient)
+- Staff view: [http://localhost:3000/staff](http://localhost:3000/staff)
 
-To learn more about Next.js, take a look at the following resources:
+Open both in separate tabs and type in the patient form — you'll see it show up on the staff tab.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Optional: copy `.env.local.example` to `.env.local` if you want to change the WebSocket port or point the app at a WebSocket server running somewhere else.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+app/
+  patient/page.js     - patient form page
+  staff/page.js        - staff view page
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+components/
+  PatientForm.jsx       - the form itself, all 12 fields
+  FormFields.jsx         - one reusable input/select, used by every field
+  StaffView.jsx           - staff dashboard, reads live data
+  StatusIndicator.jsx      - the colored status badge
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+hooks/
+  useFormValidation.js   - checks the form before it's allowed to submit
+  useWebSocket.js         - connects to the WebSocket server, sends/receives data
+
+server/
+  websocket-server.js    - the WebSocket server (a separate small Node process, not part of Next.js)
+```
+
+Full breakdown of why it's organized this way, plus design decisions and the real-time flow, is in [DEVELOPMENT_PLANNING.md](./DEVELOPMENT_PLANNING.md).
+
+## Features Implemented
+
+- All 12 patient fields (per spec), with Middle Name, Religion, and Emergency Contact as optional
+- Validation: required fields, phone (10+ digits), valid email, sane date of birth — errors only show once you've touched a field, not immediately on page load
+- Submit button disabled until the form is valid
+- Staff view mirrors the form live, field by field
+- Status badge: 🔴 Not Started → 🟢 Actively Filling → 🟡 Idle (30s no input) → ✅ Submitted
+- Responsive — one column on mobile, two columns from tablet up
+- Auto-reconnect if the WebSocket drops
+
+## Bonus Features
+
+A few things past the base requirements:
+
+- **Auto-reset after submit.** Staff view holds "Submitted" for 10 seconds, then goes back to "Not Started" and clears the fields — ready for the next patient without a manual reset.
+- **"Fill Another Form" button.** Shows up after a successful submit so the patient can start over on the same device.
+- **Multiple staff, for free.** Any number of people can have `/staff` open at once — the server broadcasts to all of them, not just one.
+- **Connection status shown to the user.** If the WebSocket connection drops, both pages show "Reconnecting…" instead of silently losing data.
+- **Dead connection cleanup.** The server pings clients every 30s and drops ones that stop responding, so a closed tab doesn't linger as a phantom "staff" connection.
+
+## How Real-Time Works
+
+Short version: patient types → browser sends it over a WebSocket → server broadcasts it to every staff tab → staff view re-renders.
+
+Longer version, including *why* it's a separate server process instead of a Next.js API route, is in [DEVELOPMENT_PLANNING.md](./DEVELOPMENT_PLANNING.md#real-time-synchronization-flow).
+
+## Deployment
+
+_TODO — not deployed yet._
+
+## A Known Limitation
+
+The root URL (`/`) is still the default Next.js starter page — it doesn't link anywhere yet. Go directly to `/patient` or `/staff`.
