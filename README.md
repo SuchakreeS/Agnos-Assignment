@@ -102,5 +102,4 @@ Short version: patient types → browser sends it over a WebSocket → server br
 Longer version, including *why* it's a separate server process instead of a Next.js API route, is in [DEVELOPMENT_PLANNING.md](./DEVELOPMENT_PLANNING.md#real-time-synchronization-flow).
 
 ## Deployment
-
-_TODO — not deployed yet._
+Live app: https://agnos-assignment-cyan.vercel.app/
