@@ -6,8 +6,9 @@ Built for the Agnos front-end assignment.
 
 ## Overview
 
-Two pages:
+Three pages:
 
+- **`/`** — landing page, just two buttons: one to the patient form, one to the staff view.
 - **`/patient`** — a form for the patient to type their info into.
 - **`/staff`** — a read-only view for staff. Shows the same data, updating as the patient types, plus a status badge (not started / actively filling / idle / submitted).
 
@@ -41,7 +42,7 @@ Terminal 2:
 npm run ws-server
 ```
 
-Then open:
+Then open [http://localhost:3000](http://localhost:3000) — it's a landing page with two buttons, one to the patient form, one to the staff view. Or go straight there:
 
 - Patient form: [http://localhost:3000/patient](http://localhost:3000/patient)
 - Staff view: [http://localhost:3000/staff](http://localhost:3000/staff)
@@ -54,6 +55,7 @@ Optional: copy `.env.local.example` to `.env.local` if you want to change the We
 
 ```
 app/
+  page.js               - landing page, links to /patient and /staff
   patient/page.js     - patient form page
   staff/page.js        - staff view page
 
@@ -102,7 +104,3 @@ Longer version, including *why* it's a separate server process instead of a Next
 ## Deployment
 
 _TODO — not deployed yet._
-
-## A Known Limitation
-
-The root URL (`/`) is still the default Next.js starter page — it doesn't link anywhere yet. Go directly to `/patient` or `/staff`.

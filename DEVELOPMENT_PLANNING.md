@@ -6,7 +6,7 @@ Notes on how this is built and why. Written for whoever reads this next (includi
 
 ```
 app/
-  page.js               - default Next.js starter page (not modified, see README)
+  page.js               - landing page, links to /patient and /staff
   patient/page.js        - renders <PatientForm />
   staff/page.js           - renders <StaffView />
 
@@ -37,6 +37,8 @@ Why split like this: `PatientForm` and `StaffView` both need the same 12 fields 
 **Status badge uses color + icon + text, not just color.** Color alone breaks for anyone colorblind. Everything is `emoji + label`, so it reads fine either way.
 
 **Staff view is read-only, not a second copy of the form.** It intentionally can't be edited — it's monitoring, not editing. Keeps the two roles clearly separate, and there's no confusion about which side is the "real" data.
+
+**Landing page exists so nobody has to guess a URL.** Without it, `/` would still be the Next.js starter page — fine for local dev where you know the routes, bad for anyone opening the deployed link cold (a reviewer, mainly). Two buttons, no clever navigation, just gets people where they're going.
 
 ## Component Architecture
 
